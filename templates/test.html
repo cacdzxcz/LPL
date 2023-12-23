@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPL</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.liMarquee.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cxselect.min.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/test.css')}}">
+    <link rel="icon" href="{{ url_for('static', filename='images/lol.ico')}}" type="image/x-icon">
+    <style>
+    body {
+        background-image: url("https://game.gtimg.cn/images/lpl/web202301/detail-adorn.png");
+        background-color: #1d212c;
+        margin: 0;
+        padding: 0;
+        color: #f4f4f4;
+        overflow: hidden;
+    }
+
+    header {
+        background-image: url('{{ url_for('static', filename='images/head_bg.png')}}');
+      background-color: rgb(25, 27, 42);
+      color: #fff;
+        display: flex;
+      padding: 10px;
+      height: 8vh;
+    }
+
+    header img {
+        margin-left: 10px; /* 可以调整图像和标题之间的距离 */
+        height: 40px; /* 调整图像的高度 */
+        /* 你可以进一步调整图像的样式，例如宽度、边框等 */
+    }
+
+    header h1 {
+        margin-left: 30%;
+        text-align: center; /* 文本水平居中 */
+        align-items: center;
+    }
+
+    nav {
+      float: left;
+      width: 15%;
+      background-color: rgb(37, 40, 52);
+      color: #fff;
+        font-family: tahoma, 微软雅黑, sans-serif;
+      height: 92vh;
+      overflow: auto;
+    }
+
+    nav a {
+      position: relative;
+      display: block;
+      padding: 25px;
+      text-decoration: none;
+      color: #fff;
+      border-bottom: 1px solid #555;
+      transition: background-color 0.3s;
+      font-size: 18px;
+    }
+
+    #chooseTeam::before {
+      content: "";
+      position: absolute;
+        left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+        border-width: 0;
+
+      border-color: transparent transparent transparent rgb(255, 255, 255); /* 调整三角形颜色和方向 */
+    }
+
+    #chooseTeam.down::before {
+        border-width: 5px 0 5px 8px; /* 调整三角形方向 */
+    }
+
+    nav a:hover {
+      background-color: #555;
+        padding-left: 30px; /* 调整文字的左侧内边距，增加文字和三角形之间的距离 */
+    }
+
+    section {
+      float: left;
+      width: 75%;
+      padding: 20px;
+    }
+
+    #teamSelection {
+      display: none;
+    }
+
+    .team-container {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        max-height: 250px; /* 调整最大高度 */
+        padding-right: 10px;
+
+        /* Webkit 滚动条样式 */
+        scrollbar-width: thin; /* Firefox 不支持此属性，但支持 scrollbar-color */
+        scrollbar-color: #ffffff #1f1f1f; /* 滚动条颜色，第一个是滑块颜色，第二个是轨道颜色 */
+    }
+
+    /* Webkit 浏览器（Chrome, Safari）的滚动条样式 */
+    .team-container::-webkit-scrollbar {
+        width: 12px; /* 滚动条宽度 */
+    }
+
+    .team-container::-webkit-scrollbar-track {
+        background-color: #ffffff; /* 轨道背景颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb {
+        background-color: #555; /* 滑块颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb:hover {
+        background-color: #777; /* 悬停时滑块颜色 */
+    }
+
+    .team-container::-webkit-scrollbar-corner {
+        background-color: #1f1f1f; /* 边角背景颜色 */
+    }
+
+    /* 选择所有的teamOption*/
+    .teamOption {
+      padding: 15px;
+      text-decoration: none;
+      color: #fff;
+      border-bottom: 1px solid #555;
+    }
+
+    /* 鼠标悬停样式 */
+    .teamOption:hover {
+      background-color: #555;
+    }
+
+    #teamInfo {
+      margin-left: 15%;
+      height: 90vh;
+      width: 85%;
+      font: 12px/1.5 tahoma,"\5fae\8f6f\96c5\9ed1",sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* 垂直居中 */
+      text-align: center; /* 文本水平居中 */
+    }
+
+    #team_detail{
+        width: 600px;
+        flex: 0 0 600px;
+    }
+
+    #team_detail_team_name{
+      display: flex;
+      align-items: center; /* 垂直居中 */
+      justify-content: center; /* 水平居中 */
+      height: 100px;
+      color: #ffffff;
+      text-align: center;
+      font-size: 50px;
+    }
+
+    #team_introduce{
+      margin-top: 50px;
+      height: 150px;
+      color: #c0c0c0;
+      overflow: auto;
+      text-align: center;
+      font-size: 17px;
+
+        /* Webkit (Chrome, Safari) */
+      &::-webkit-scrollbar {
+        width: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #888;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+      }
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    #team_data{
+      margin-top: 50px;
+      display: flex;
+      flex-direction: row; /* 水平排列元素 */
+      align-items: flex-start; /* 顶部对齐 */
+      height: 50px;
+      width: 600px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .vertical-bar {
+        display: none;
+        margin-top: 25px;
+      height: 25px; /* 设置竖直条的高度 */
+      width: 8px; /* 设置竖直条的宽度 */
+      background-color: #d0d0d0; /* 设置竖直条的颜色 */
+      margin-right: 5px; /* 设置竖直条与文本之间的间距 */
+      justify-content: center;
+      align-items: center;
+    }
+
+    #team_data_introduce{
+      height: 50px;
+      width: 150px;
+      color: #ffffff;
+      font-size: 25px;
+    }
+
+    #radarChart {
+        margin-top: 70px;
+        margin-left: 0px;
+      height: 490px; /* 设置雷达图的高度 */
+      width: 490px; /* 设置雷达图的宽度 */
+      font-size: 50px;
+    }
+    </style>
+    <style>
+        #myChart1{
+            width: 600px;
+            height: 400px;
+            box-shadow :5px  5px 5px 5px #888888;
+            background-color: #ffffff;
+            margin-bottom: 40px;
+        }
+        #myChart2{
+            width: 600px;
+            height: 400px;
+            box-shadow :5px  5px 5px 5px #888888;
+            background-color: #ffffff;
+            margin-bottom: 40px;
+        }
+
+        .mainbox{ padding:0 0 0 0; height: 30%}
+        .mainbox{ margin-left:-.4rem; margin-right:-.4rem;list-style-type: none;}
+        .mainbox>li{ float: left; padding:0.4rem}
+        .mainbox>li{ width: 95%}
+        .mainbox>li:nth-child(2){ width: 100%}
+        .boxall{ padding:15px; position: relative; margin-bottom:0px; z-index: 10;}
+        .alltitle{ font-size:18px; color:#fff; position: relative; padding-left: 12px;margin-bottom: 10px;}
+        .alltitle:before{ width: 5px; height: 20px; top:2px; position: absolute; content: ""; background: #49bcf7; border-radius:20px; left: 0; }
+
+        .navboxall{height: 100%;}
+        .table1 th{border-bottom: 1px solid rgba(255,255,255,1); font-size: 16px; color:rgba(255,255,255,1); font-weight: normal; padding:0 0 10px 0; text-align: center}
+        .table1 td{ font-size: 16px; color: rgba(255, 255, 255, 1); padding: 15px 0 0 0; text-align: center }
+        .table1 span{ width: 24px; height: 24px; border-radius: 3px; display: block; background: #878787; color: #fff; line-height: 24px; text-align: center;}
+
+        .table1 tr:nth-child(2) span{ background: #ed405d}
+        .table1 tr:nth-child(3) span{ background: #f78c44}
+         .table1 tr:nth-child(4) span{ background: #49bcf7}
+        .container {
+            display: flex;
+            margin-top: 3%;
+            margin-left: 18%;
+        }
+        .left {
+            flex: 1;
+            padding: 10px;
+        }
+        .right {
+            margin-right: 10%;
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+<div id="team-name" style="display: none">{{ team_name }}</div>
+  <header>
+      <img src="https://game.gtimg.cn/images/lol/logo/middle-white.png" alt="Logo" class="c-nav-logo-lol">
+      <img src="https://game.gtimg.cn/images/lpl/web202301/team-lpl-logo.jpg" alt="Logo">
+    <h1>2023LPL数据分析</h1>
+  </header>
+  <nav>
+    <a href="/" onclick="main()">战队数据</a>
+    <a class="chooseTeam" id="chooseTeam" onclick="choose()">俱乐部列表</a>
+    <section>
+      <div id="teamSelection" class="team-container">
+        <a class="teamOption" href="/test/JDG/">JDG</a>
+        <a class="teamOption" href="/test/AL/">AL</a>
+        <a class="teamOption" href="/test/BLG/">BLG</a>
+        <a class="teamOption" href="/test/EDG/">EDG</a>
+        <a class="teamOption" href="/test/IG/">IG</a>
+        <a class="teamOption" href="/test/西安WE/">西安WE</a>
+        <a class="teamOption" href="/test/深圳NIP/">深圳NIP</a>
+        <a class="teamOption" href="/test/WBG/">WBG</a>
+        <a class="teamOption" href="/test/UP/">UP</a>
+        <a class="teamOption" href="/test/TT/">TT</a>
+        <a class="teamOption" href="/test/TES/">TES</a>
+        <a class="teamOption" href="/test/RNG/">RNG</a>
+        <a class="teamOption" href="/test/LNG/">LNG</a>
+        <a class="teamOption" href="/test/LGD/">LGD</a>
+        <a class="teamOption" href="/test/FPX/">FPX</a>
+      </div>
+    </section>
+  </nav>
+  <div id="teamInfo">
+      <div class="team_container">
+        <!-- 放置整个战队雷达图的位置 -->
+        <div id="team_detail">
+          <h1 id="team_detail_team_name"></h1>
+          <p id="team_introduce"></p>
+          <div id="team_data">
+            <div class="vertical-bar" id="vertical-bar"></div>
+            <h1 id="team_data_introduce"></h1>
+          </div>
+            <canvas id="radarChart"></canvas>
+        </div>
+        <!-- 放置五个首发队员照片的位置 <img src="../static/images/369.png" alt="Player 1" class="playerPhoto">-->
+          <div class="team_img" id="team_img" >
+              <div class="team_logo">
+                  <img id="team_logo" src="" alt="logo">
+              </div>
+              <div class="players">
+                <ul class="player_row">
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 1">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 2">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 2">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="player_row">
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 3">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 4">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                    <li class="player_col">
+                        <a href="#">
+                            <img src="" alt="Player 5">
+                            <div class="name"></div>
+                        </a>
+                    </li>
+                </ul>
+              </div>
+          </div>
+      </div>
+  </div>
+</body>
+<script src="{{ url_for('static',filename='js/test.js')}}"></script>
+<script>
+    window.onload = function() {
+      // 设置页面宽度和高度为视口宽度和高度的90%
+      var widthPercentage = 90;
+      var heightPercentage = 90;
+
+      var newWidth = (window.innerWidth * widthPercentage) / 100;
+      var newHeight = (window.innerHeight * heightPercentage) / 100;
+
+      document.documentElement.style.width = newWidth + "px";
+      document.documentElement.style.height = newHeight + "px";
+    };
+</script>
+</html>
+<script>
+    window.onload = function() {
+      // 设置页面宽度和高度为视口宽度和高度的90%
+      var heightPercentage = 90;
+
+      var newHeight = (window.innerHeight * heightPercentage) / 100;
+
+      document.documentElement.style.height = newHeight + "px";
+    };
+</script>

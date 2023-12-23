@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPL</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.liMarquee.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cxselect.min.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/player_page.css')}}">
+    <link rel="icon" href="{{ url_for('static', filename='images/lol.ico')}}" type="image/x-icon">
+</head>
+<body>
+    <div id="playerName" style="display: none">{{ player_data }}</div>
+    <header>
+      <img src="https://game.gtimg.cn/images/lol/logo/middle-white.png" alt="Logo" class="c-nav-logo-lol">
+      <img src="https://game.gtimg.cn/images/lpl/web202301/team-lpl-logo.jpg" alt="Logo">
+    <h1>2023LPL数据分析</h1>
+  </header>
+    <nav>
+        <a href="/" onclick="main()">战队数据</a>
+        <a id="chooseTeam" onclick="choose()">俱乐部列表</a>
+        <section>
+          <div id="teamSelection" class="team-container">
+            <a class="teamOption" href="/test/JDG/">JDG</a>
+            <a class="teamOption" href="/test/AL/">AL</a>
+            <a class="teamOption" href="/test/BLG/">BLG</a>
+            <a class="teamOption" href="/test/EDG/">EDG</a>
+            <a class="teamOption" href="/test/IG/">IG</a>
+            <a class="teamOption" href="/test/西安WE/">西安WE</a>
+            <a class="teamOption" href="/test/深圳NIP/">深圳NIP</a>
+            <a class="teamOption" href="/test/WBG/">WBG</a>
+            <a class="teamOption" href="/test/UP/">UP</a>
+            <a class="teamOption" href="/test/TT/">TT</a>
+            <a class="teamOption" href="/test/TES/">TES</a>
+            <a class="teamOption" href="/test/RNG/">RNG</a>
+            <a class="teamOption" href="/test/LNG/">LNG</a>
+            <a class="teamOption" href="/test/LGD/">LGD</a>
+            <a class="teamOption" href="/test/FPX/">FPX</a>
+          </div>
+        </section>
+    </nav>
+
+    <div class="player-container">
+        <div class="player-img">
+            <div class="player">
+                <img src="//img.crawler.qq.com/lolwebvideo/20231010192811/fe4a547c3bc524c7bcc78f2d0cac8480/0" alt="player">
+            </div>
+            <div class="team">
+                <img src="https://img.crawler.qq.com/lolwebvideo/20210524154930/2068d500b82e02ab42f0a6f521a12b5e/0" alt="team">
+            </div>
+            <div class="player-id"></div>
+            <div class="player-name"></div>
+        </div>
+        <div class="player-info">
+            <div class="info-title">
+                <div class="base-title">个人数据</div>
+                <div class="btn-switch">
+                    <input type="checkbox" id="toggleSwitch">
+                    <label for="toggleSwitch" class="switch-text">
+                        <span class="switch-text-mode">环形图</span>
+                        <span class="switch-text-mode">雷达图</span>
+                    </label>
+                </div>
+            </div>
+            <div class="info-chart">
+                <div class="round-group" id="round-group">
+                    <div class="round-row">
+                        <div class="round" id="r1"></div>
+                        <div class="round" id="r2"></div>
+                    </div>
+                    <div class="round-row">
+                        <div class="round" id="r3"></div>
+                        <div class="round" id="r4"></div>
+                    </div>
+                    <div class="round-row">
+                        <div class="round" id="r5"></div>
+                        <div class="round" id="r6"></div>
+                    </div>
+                </div>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{{ url_for('static',filename='js/player_page.js')}}"></script>
+<script>
+    window.onload = function() {
+      // 设置页面宽度和高度为视口宽度和高度的90%
+      var heightPercentage = 90;
+
+      var newHeight = (window.innerHeight * heightPercentage) / 100;
+
+      document.documentElement.style.height = newHeight + "px";
+    };
+</script>
+</body>
+</html>

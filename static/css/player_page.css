@@ -1,0 +1,401 @@
+body{
+    background-image: url("https://game.gtimg.cn/images/lpl/web202301/detail-adorn.png");
+    background-color: #1d212c;
+    margin: 0;
+    padding: 0;
+    color: #f4f4f4;
+}
+nav {
+    float: left;
+    width: 16%;
+    background-color: #363535;
+    color: #fff;
+    height: 90vh;
+    overflow: auto;
+}
+nav *{
+}
+nav a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1px solid #555;
+    transition: background-color 0.3s;
+}
+nav a:hover {
+    background-color: #555;
+}
+section {
+    float: left;
+    width: 80%;
+    padding: 20px;
+}
+
+
+.player-container {
+    margin-left: 16%;
+    height: 90%;
+    width: 84%;
+    display: flex;
+    flex-direction: row;
+}
+.player-container .player-img {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.player-container .player-img * {
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.player-container .player-img .team {
+    height: 25vh;
+    width: auto;
+}
+.player-container .player-img .team img {
+
+}
+.player-container .player-img .player-id {
+    height: 13vh;
+    font-family: Korium, fantasy;
+    font-size: 100px;
+}
+.player-container .player-img .player-name {
+    height: 7vh;
+    font-size: 30px;
+    font-family: 华文新魏, sans-serif;
+}
+.player-container .player-img .player {
+    height: 45vh;
+    width: auto;
+}
+.player-container .player-img .player img{
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+.player-container .player-info {
+    width: 60%;
+    height: 100%;
+}
+.player-container .player-info .info-title {
+    height: 10vh;
+    color: #f4f4f4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+.info-title .base-title {
+    font-family: block-title sans-serif;
+    font-size: 32px;
+}
+.player-container .player-info .info-chart {
+    height: 80vh;
+    justify-content: center;
+    align-items: center;
+}
+#radarChart {
+    max-width: 100%;
+    max-height: 100%;
+    width: 500px;
+    height: 500px;
+    font-size: 50px;
+}
+.round-group {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.round-group .round-row {
+    height: 26vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+.round-group .round-row .round{
+    width: 50%;
+    height: 100%;
+}
+
+/* 隐藏原生的checkbox */
+.btn-switch input[type="checkbox"]:first-of-type {
+    display: none;
+}
+/* 设定label的样式，模拟开关外观 */
+.btn-switch label:first-of-type {
+    display: flex;
+    align-items: center;
+    width: 150px;
+    /*height: 30px;*/
+    background-color: #1d212c;
+    position: relative;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px;
+    overflow: hidden; /* 保证超出部分被隐藏 */
+}
+/* 左侧文字 */
+.btn-switch .switch-text {
+    flex: 1;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+    width: 50%; /* 文字占50%宽度 */
+    color: #455173;
+}
+.btn-switch .switch-text .switch-text-mode:first-of-type {
+    color: white;
+}
+.btn-switch .switch-text .switch-text-mode{
+    width: 50%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+}
+/* 设定label的样式，模拟开关按钮 */
+.btn-switch label:first-of-type::after {
+    content: '';
+    width: 50%; /* 滑动按钮占50%宽度 */
+    height: 100%;
+    background-color: rgb(199, 32, 32);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 3px; /* 方形按钮的边角半径 */
+    transition: transform 0.3s;
+    opacity: 0.3;
+}
+/* 根据checkbox的选中状态调整label:after的位置 */
+.btn-switch input[type="checkbox"]:first-of-type:checked + label:first-of-type::after {
+    transform: translateX(100%); /* 按钮向右滑动 */
+}
+
+
+body {
+    background-image: url("https://game.gtimg.cn/images/lpl/web202301/detail-adorn.png");
+    background-color: #1d212c;
+    margin: 0;
+    padding: 0;
+    color: #f4f4f4;
+    overflow: hidden;
+}
+
+header {
+        background-image: url("../images/head_bg.png");
+      background-color: rgb(25, 27, 42);
+      color: #fff;
+        display: flex;
+      padding: 10px;
+      height: 8vh;
+    }
+
+    header img {
+        margin-left: 10px; /* 可以调整图像和标题之间的距离 */
+        height: 40px; /* 调整图像的高度 */
+        /* 你可以进一步调整图像的样式，例如宽度、边框等 */
+    }
+
+    header h1 {
+        margin-left: 30%;
+        text-align: center; /* 文本水平居中 */
+        align-items: center;
+    }
+
+nav {
+  float: left;
+  width: 15%;
+  background-color: rgb(37, 40, 52);
+  color: #fff;
+    font-family: tahoma, 微软雅黑, sans-serif;
+  height: 92vh;
+  overflow: auto;
+}
+
+nav a {
+  position: relative;
+  display: block;
+  padding: 25px;
+  text-decoration: none;
+  color: #fff;
+  border-bottom: 1px solid #555;
+  transition: background-color 0.3s;
+  font-size: 18px;
+}
+
+#chooseTeam::before {
+  content: "";
+  position: absolute;
+    left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+    border-width: 0;
+
+  border-color: transparent transparent transparent rgb(255, 255, 255); /* 调整三角形颜色和方向 */
+}
+
+#chooseTeam.down::before {
+    border-width: 5px 0 5px 8px; /* 调整三角形方向 */
+}
+
+
+nav a:hover {
+  background-color: #555;
+    padding-left: 30px; /* 调整文字的左侧内边距，增加文字和三角形之间的距离 */
+}
+
+section {
+  float: left;
+  width: 75%;
+  padding: 20px;
+}
+
+#teamSelection {
+  display: none;
+}
+
+.team-container {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        max-height: 250px; /* 调整最大高度 */
+        padding-right: 10px;
+
+        /* Webkit 滚动条样式 */
+        scrollbar-width: thin; /* Firefox 不支持此属性，但支持 scrollbar-color */
+        scrollbar-color: #ffffff #1f1f1f; /* 滚动条颜色，第一个是滑块颜色，第二个是轨道颜色 */
+    }
+
+    /* Webkit 浏览器（Chrome, Safari）的滚动条样式 */
+    .team-container::-webkit-scrollbar {
+        width: 12px; /* 滚动条宽度 */
+    }
+
+    .team-container::-webkit-scrollbar-track {
+        background-color: #ffffff; /* 轨道背景颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb {
+        background-color: #555; /* 滑块颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb:hover {
+        background-color: #777; /* 悬停时滑块颜色 */
+    }
+
+    .team-container::-webkit-scrollbar-corner {
+        background-color: #1f1f1f; /* 边角背景颜色 */
+    }
+
+/* 选择所有的teamOption*/
+.teamOption {
+  padding: 15px;
+  text-decoration: none;
+  color: #fff;
+  border-bottom: 1px solid #555;
+}
+
+/* 鼠标悬停样式 */
+.teamOption:hover {
+  background-color: #555;
+}
+
+#teamInfo {
+  margin-left: 15%;
+  height: 90vh;
+  width: 85%;
+  font: 12px/1.5 tahoma,"\5fae\8f6f\96c5\9ed1",sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 垂直居中 */
+  text-align: center; /* 文本水平居中 */
+}
+
+#team_detail{
+    width: 600px;
+    flex: 0 0 600px;
+}
+
+#team_detail_team_name{
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  height: 100px;
+  color: #ffffff;
+  text-align: center;
+  font-size: 50px;
+}
+
+#team_introduce{
+  margin-top: 50px;
+  height: 150px;
+  color: #c0c0c0;
+  overflow: auto;
+  text-align: center;
+  font-size: 17px;
+
+    /* Webkit (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+  }
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+#team_data{
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row; /* 水平排列元素 */
+  align-items: flex-start; /* 顶部对齐 */
+  height: 50px;
+  width: 600px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.vertical-bar {
+    display: none;
+    margin-top: 25px;
+  height: 25px; /* 设置竖直条的高度 */
+  width: 8px; /* 设置竖直条的宽度 */
+  background-color: #d0d0d0; /* 设置竖直条的颜色 */
+  margin-right: 5px; /* 设置竖直条与文本之间的间距 */
+  justify-content: center;
+  align-items: center;
+}
+
+#team_data_introduce{
+  height: 50px;
+  width: 150px;
+  color: #ffffff;
+  font-size: 25px;
+}
+
+#radarChart {
+    margin-top: 70px;
+    margin-left: 0px;
+  height: 490px; /* 设置雷达图的高度 */
+  width: 490px; /* 设置雷达图的宽度 */
+  font-size: 50px;
+}

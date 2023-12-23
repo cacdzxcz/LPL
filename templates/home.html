@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LPL</title>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/echarts.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.liMarquee.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.cxselect.min.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/player_page.css')}}">
+    <link rel="icon" href="{{ url_for('static', filename='images/lol.ico')}}" type="image/x-icon">
+    <style>
+    body {
+        background-image: url("https://game.gtimg.cn/images/lpl/web202301/detail-adorn.png");
+        background-color: #1d212c;
+        margin: 0;
+        padding: 0;
+        color: #f4f4f4;
+        overflow: hidden;
+    }
+
+    header {
+        background-image: url('../static/images/head_bg.png');
+      background-color: rgb(25, 27, 42);
+      color: #fff;
+        display: flex;
+      padding: 10px;
+      height: 8vh;
+    }
+
+    header img {
+        margin-left: 10px; /* 可以调整图像和标题之间的距离 */
+        height: 40px; /* 调整图像的高度 */
+        /* 你可以进一步调整图像的样式，例如宽度、边框等 */
+    }
+
+    header h1 {
+        margin-left: 30%;
+        text-align: center; /* 文本水平居中 */
+        align-items: center;
+    }
+
+    nav {
+      float: left;
+      width: 15%;
+      background-color: rgb(37, 40, 52);
+      color: #fff;
+        font-family: tahoma, 微软雅黑, sans-serif;
+      height: 92vh;
+      overflow: auto;
+    }
+
+    nav a {
+      position: relative;
+      display: block;
+      padding: 25px;
+      text-decoration: none;
+      color: #fff;
+      border-bottom: 1px solid #555;
+      transition: background-color 0.3s;
+      font-size: 18px;
+    }
+
+    #chooseTeam::before {
+      content: "";
+      position: absolute;
+        left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 0 5px 8px; /* 调整三角形方向 */
+      border-color: transparent transparent transparent rgb(255, 255, 255); /* 调整三角形颜色和方向 */
+    }
+
+    #chooseTeam.down::before {
+        border-width: 0;
+    }
+
+    nav a:hover {
+      background-color: #555;
+        padding-left: 30px; /* 调整文字的左侧内边距，增加文字和三角形之间的距离 */
+    }
+
+    section {
+      float: left;
+      width: 75%;
+      padding: 20px;
+    }
+
+    #teamSelection {
+      display: none;
+    }
+
+    .team-container {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        max-height: 250px; /* 调整最大高度 */
+        padding-right: 10px;
+
+        /* Webkit 滚动条样式 */
+        scrollbar-width: thin; /* Firefox 不支持此属性，但支持 scrollbar-color */
+        scrollbar-color: #ffffff #1f1f1f; /* 滚动条颜色，第一个是滑块颜色，第二个是轨道颜色 */
+    }
+
+    /* Webkit 浏览器（Chrome, Safari）的滚动条样式 */
+    .team-container::-webkit-scrollbar {
+        width: 12px; /* 滚动条宽度 */
+    }
+
+    .team-container::-webkit-scrollbar-track {
+        background-color: #ffffff; /* 轨道背景颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb {
+        background-color: #555; /* 滑块颜色 */
+        border-radius: 6px; /* 滑块圆角 */
+    }
+
+    .team-container::-webkit-scrollbar-thumb:hover {
+        background-color: #777; /* 悬停时滑块颜色 */
+    }
+
+    .team-container::-webkit-scrollbar-corner {
+        background-color: #1f1f1f; /* 边角背景颜色 */
+    }
+
+    /* 选择所有的teamOption*/
+    .teamOption {
+      padding: 15px;
+      text-decoration: none;
+      color: #fff;
+      border-bottom: 1px solid #555;
+    }
+
+    /* 鼠标悬停样式 */
+    .teamOption:hover {
+      background-color: #555;
+    }
+    </style>
+    <style>
+        #myChart1{
+            width: 600px;
+            height: 400px;
+            box-shadow :5px  5px 5px 5px #888888;
+
+            margin-bottom: 40px;
+        }
+        #myChart2{
+            width: 600px;
+            height: 400px;
+            box-shadow :5px  5px 5px 5px #888888;
+
+            margin-bottom: 40px;
+        }
+
+        .mainbox{ padding:0 0 0 0; height: 30%}
+        .mainbox{ margin-left:-.4rem; margin-right:-.4rem;list-style-type: none;}
+        .mainbox>li{ float: left; padding:0.4rem}
+        .mainbox>li{ width: 95%}
+        .mainbox>li:nth-child(2){ width: 100%}
+        .boxall{ padding:15px; position: relative; margin-bottom:0px; z-index: 10;}
+        .alltitle{ font-size:18px; color:#fff; position: relative; padding-left: 12px;margin-bottom: 10px;}
+        .alltitle:before{ width: 5px; height: 20px; top:2px; position: absolute; content: ""; background: #49bcf7; border-radius:20px; left: 0; }
+
+        .navboxall{height: 100%;}
+        .table1 th{border-bottom: 1px solid rgba(255,255,255,1); font-size: 16px; color:rgba(255,255,255,1); font-weight: normal; padding:0 0 10px 0; text-align: center}
+        .table1 td{ font-size: 16px; color: rgba(255, 255, 255, 1); padding: 15px 0 0 0; text-align: center }
+        .table1 span{ width: 24px; height: 24px; border-radius: 3px; display: block; background: #878787; color: #fff; line-height: 24px; text-align: center;
+    margin: 0 auto; /* 设置margin属性来水平居中 */
+}
+
+        .table1 tr:nth-child(2) span{ background: #ed405d}
+        .table1 tr:nth-child(3) span{ background: #f78c44}
+         .table1 tr:nth-child(4) span{ background: #49bcf7}
+
+        .container {
+            display: flex;
+            margin-top: 3%;
+            margin-left: 18%;
+        }
+        .left {
+            flex: 1;
+            padding: 10px;
+        }
+        .right {
+            margin-right: 10%;
+            flex: 1;
+        }
+        .boxall {
+            overflow: hidden; /* Clearfix for containing floated elements */
+        }
+
+        .navboxall {
+            overflow-y: auto; /* Enable vertical scrollbar if needed */
+            max-height: 350px; /* Set the maximum height, adjust as needed */
+        }
+        .navboxall::-webkit-scrollbar {
+            width: 10px; /* Set the width of the scrollbar */
+        }
+
+        .navboxall::-webkit-scrollbar-thumb {
+            background-color: #888; /* Set the color of the thumb */
+            border-radius: 5px; /* Set the border-radius of the thumb */
+        }
+
+        .navboxall::-webkit-scrollbar-track {
+            background-color: #f1f1f1; /* Set the color of the track */
+            border-radius: 8px; /* 设置滚动条轨道的边框半径 */
+        }
+    </style>
+</head>
+
+<body>
+  <header>
+      <img src="https://game.gtimg.cn/images/lol/logo/middle-white.png" alt="Logo" class="c-nav-logo-lol">
+      <img src="https://game.gtimg.cn/images/lpl/web202301/team-lpl-logo.jpg" alt="Logo">
+    <h1>2023LPL数据分析</h1>
+  </header>
+
+  <nav>
+    <a href="/" onclick="main()">战队数据</a>
+    <a class="chooseTeam" id="chooseTeam" onclick="choose()">俱乐部列表</a>
+    <section>
+      <div id="teamSelection" class="team-container">
+        <a class="teamOption" href="/test/JDG/">JDG</a>
+        <a class="teamOption" href="/test/AL/">AL</a>
+        <a class="teamOption" href="/test/BLG/">BLG</a>
+        <a class="teamOption" href="/test/EDG/">EDG</a>
+        <a class="teamOption" href="/test/IG/">IG</a>
+        <a class="teamOption" href="/test/西安WE/">西安WE</a>
+        <a class="teamOption" href="/test/深圳NIP/">深圳NIP</a>
+        <a class="teamOption" href="/test/WBG/">WBG</a>
+        <a class="teamOption" href="/test/UP/">UP</a>
+        <a class="teamOption" href="/test/TT/">TT</a>
+        <a class="teamOption" href="/test/TES/">TES</a>
+        <a class="teamOption" href="/test/RNG/">RNG</a>
+        <a class="teamOption" href="/test/LNG/">LNG</a>
+        <a class="teamOption" href="/test/LGD/">LGD</a>
+        <a class="teamOption" href="/test/FPX/">FPX</a>
+      </div>
+    </section>
+  </nav>
+
+
+    <div class="container" id="container">
+        <div class="left">
+            <!--
+            选手数据图 kda,击杀，死亡，助攻...（根据kda排序选前十个）
+            -->
+            <div id="myChart1" ></div>
+            <!--英雄数据，b/p率，胜率-->
+            <div id="myChart2" ></div>
+        </div>
+        <div class="right" id="right">
+            <div class="mainbox">
+                    <li>
+                        <div class="boxall" style="height:400px">
+                            <div class="alltitle">战队胜率排行榜</div>
+                            <div class="navboxall">
+                                <table id="wingstop5Container" class="table1" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tbody id="wingstop5">
+                                        <tr>
+                                            <th scope="col" class="toptop">排名</th>
+                                            <th scope="col">战队</th>
+                                            <th scope="col">出场次数</th>
+                                            <th scope="col">胜率</th>
+                                            <th scope="col">总击杀(场均)</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="boxall" style="height: 400px">
+                            <div class="alltitle">个人KDA排行榜</div>
+                            <div class="navboxall">
+                                <table id="membertop5Container" class="table1" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tbody id="membertop5">
+                                        <tr>
+                                            <th scope="col" class="toptop">排名</th>
+                                            <th scope="col">队员</th>
+                                            <th scope="col">位置</th>
+                                            <th scope="col">总击杀</th>
+                                            <th scope="col">KDA</th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </li>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+// 加载主界面
+    function main() {
+      // 这里可以添加主界面的逻辑
+        load_hero()
+        load_player()
+        load_rank1()
+        console.log("跳转到主界面");
+    }
+    function load_player() {
+        $.ajax({
+        url:'/team_data',
+        data: {},
+        type: 'POST',
+        async: false,
+        dataType:'json',
+        success:function (data) {
+          // 首先绘制雷达图
+
+          console.log(data);
+
+          let myChart1 = echarts.init(document.getElementById('myChart1'));
+
+    // 设置数据
+    let option1 = {
+        title: {
+        text: '战队数据对比',  // 设置标题内容
+        left: 'center',  // 设置标题居中
+        top:5,
+            textStyle: {
+            color: 'white' // Set title text color to white
+        }
+        },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        top:30,
+        data: ['场均击杀', '插眼数', '控龙率'],
+          textStyle: {
+            color: 'white' // Set title text color to white
+        }
+
+      },
+      xAxis: {
+        type: 'category',
+        data: data.name,
+          axisLabel: {
+            color: 'white' // Set x-axis label color to white
+        },
+        axisLine: {
+            lineStyle: {
+                color: 'white' // Set x-axis line color to white
+            }
+        },
+
+        name:"战队"
+      },
+      yAxis: {
+        type: 'value',
+          axisLabel: {
+            color: 'white' // Set x-axis label color to white
+        },
+        axisLine: {
+            lineStyle: {
+                color: 'white' // Set x-axis line color to white
+            }
+        }
+
+      },
+      series: [{
+        name: '场均击杀',
+        data: data.data1,
+        type: 'line',
+        areaStyle: {color: 'rgb(206,9,250)'}
+      },
+      {
+        name: '插眼数',
+        data: data.data2,
+        type: 'line',
+          areaStyle: {color: 'rgba(94,255,0,0.58)'}
+      },
+      {
+        name: '控龙率',
+        data: data.data6,
+        type: 'line',
+          areaStyle: {  color: 'rgba(0,60,255,0.63)'}
+      }],
+      toolbox: {
+        feature: {
+          magicType: {type: ['line', 'bar'],iconStyle: {
+                color: 'white' // Set magicType icon color to white
+            }},
+          saveAsImage: {iconStyle: {
+                color: 'white' // Set magicType icon color to white
+            }}
+        }
+      }
+    };
+
+    // 使用设置的数据绘制折线图
+    myChart1.setOption(option1);
+        },
+        error:function (msg) {
+            console.log(msg);
+            alert('系统发生错误!战队排行榜');
+        }
+    })
+    }
+    function load_hero() {
+        $.ajax({
+        url:'/heropick',
+        data: {},
+        type: 'POST',
+        async: false,
+        dataType:'json',
+        success:function (data) {
+          // 首先绘制雷达图
+
+            // 处理数据
+          picknum = data.picknum
+            new_picknum = []
+
+            for (var i = 0; i < picknum.length; i++) {
+                var tuple = picknum[i];
+                new_picknum.push(tuple.replace('%', ''));
+            }
+
+            winrate = data.winrate
+            new_winrate = []
+
+            for (var i = 0; i < winrate.length; i++) {
+                var tuple = winrate[i];
+                new_winrate.push(tuple.replace('%', ''));
+            }
+
+            new_ban = []
+
+            for (var i = 0; i < winrate.length; i++) {
+                var tuple = (parseFloat(new_winrate[i]) + parseFloat(new_picknum[i])) / 2.;
+                new_ban.push(tuple.toString());
+            }
+
+            data = [('name', data.name), ('outcount', data.outcount), ('picknum', new_picknum), ('winrate', new_winrate), ('ban', new_ban)];
+
+          console.log(data[0]);
+          let myChart2 = echarts.init(document.getElementById('myChart2'));
+
+    let option2 = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
+        title: {
+        text: '英雄数据',  // 设置标题内容
+        left: 'center',  // 设置标题居中
+        top:0,
+             textStyle: {
+            color: 'white' // Set title text color to white
+        }
+        },
+
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'value',
+      axisLabel: {
+            color: 'white' // Set x-axis label color to white
+        },
+        axisLine: {
+            lineStyle: {
+                color: 'white' // Set x-axis line color to white
+            }
+        }
+  },
+  yAxis: {
+    type: 'category',
+    data: data[0],
+      axisLabel: {
+            color: 'white' ,// Set x-axis label color to white
+          interval:0,
+          rotate:30
+        },
+        axisLine: {
+            lineStyle: {
+                color: 'white' // Set x-axis line color to white
+            }
+        }
+
+
+  },
+    dataZoom: [  // 添加数据缩放功能
+       {
+       type: 'slider',
+        show: true,
+
+       orient: 'vertical',
+       start: 0,
+       end: 20
+       },
+        {   // 这个dataZoom组件，也控制x轴。
+            type: 'inside', // 这个 dataZoom 组件是 inside 型 dataZoom 组件
+            orient: 'vertical',
+            start: 0,      // 左边在 0% 的位置。
+            end: 20         // 右边在 80% 的位置。
+        }
+    ],
+  series: [
+    {
+      name: 'out count',
+      type: 'bar',
+
+      stack: 'stack1',
+      itemStyle: {
+        color: '#61a0a8'
+      },
+      label: {
+        show: true,
+        position: 'insideRight',
+        formatter: '{c}',
+          textStyle: {
+                color: 'white' // Set label text color to white
+            }
+      },
+      data: data[1]
+    },
+    {
+      name: 'pick(%)',
+      type: 'bar',
+      stack: 'stack1',
+      itemStyle: {
+        color: '#d48265'
+      },
+      label: {
+        show: true,
+        position: 'insideRight',
+        formatter: '{c}',
+          textStyle: {
+                color: 'white' // Set label text color to white
+            }
+      },
+      data: data[2]
+
+    },
+    {
+      name: 'win(%)',
+      type: 'bar',
+      stack: 'stack1',
+      itemStyle: {
+        color: '#91c7ae'
+      },
+      label: {
+        show: true,
+        position: 'insideRight',
+        formatter: '{c}',
+          textStyle: {
+                color: 'white' // Set label text color to white
+            }
+      },
+      data: data[3]
+    },
+    {
+      name: 'ban(%)',
+      type: 'bar',
+      stack: 'stack1',
+        textStyle: {
+                color: 'white' // Set label text color to white
+            },
+      itemStyle: {
+        color: '#749f83'
+      },
+      label: {
+        show: true,
+        position: 'insideRight',
+        formatter: '{c}',
+          insideLabel: {
+                show: true,
+                color: 'white' // Set label text color to white
+            },
+      },
+      data:  data[4]
+    }
+  ],
+  // 控制哪些系列和柱子显示或隐藏
+  legend: {
+      top:30,
+      textStyle: {
+        color: 'white' // Set legend text color to white
+    },
+      data: ['out count', 'pick(%)', 'win(%)', 'ban(%)'],
+  }
+};
+    myChart2.setOption(option2);
+
+        },
+        error:function (msg) {
+            console.log(msg);
+            alert('系统发生错误!战队排行榜');
+        }
+    })
+    }
+    window.addEventListener("load", load_player);
+    window.addEventListener("load", load_hero);
+    function load_rank1() {
+    $.ajax({
+        url: '/player_top',
+        data: {},
+        type: 'POST',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+
+            // 动态设置membertop5的行数
+            var membertop5 = document.getElementById("membertop5");
+            while (membertop5.rows.length > 1) {
+                membertop5.deleteRow(1);
+            }
+
+            // 将队员数据填充到个人排行榜中
+            for (var i = 0; i < data.name.length; i++) {
+                var row = membertop5.insertRow(i + 1);
+                var cells = [];
+                for (var j = 0; j < 5; j++) {
+                    cells[j] = row.insertCell(j);
+                }
+                // 设置 cells[0] 为 <td><span>5</span></td> 形式
+                cells[0].innerHTML = '<td><span>' + (i + 1) + '</span></td>';
+                cells[1].innerHTML = data.name[i];
+                cells[2].innerHTML = data.position[i];
+                cells[3].innerHTML = data.total_kills[i];
+                cells[4].innerHTML = data.kda[i];
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert('系统发生错误!个人排行榜');
+        }
+    });
+
+    $.ajax({
+        url: '/team_top',
+        data: {},
+        type: 'POST',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+
+            // 动态设置wingstop5的行数
+            var wingstop5 = document.getElementById("wingstop5");
+            while (wingstop5.rows.length > 1) {
+                wingstop5.deleteRow(1);
+            }
+
+            // 将战队数据填充到战队排行榜中
+            for (var i = 0; i < data.name.length; i++) {
+                var row = wingstop5.insertRow(i + 1);
+                var cells = [];
+                for (var j = 0; j < 5; j++) {
+                    cells[j] = row.insertCell(j);
+                }
+                // 设置 cells[0] 为 <td><span>5</span></td> 形式
+                cells[0].innerHTML = '<td><span>' + (i + 1) + '</span></td>';
+                cells[1].innerHTML = data.name[i];
+                cells[2].innerHTML = data.out_num[i];
+                cells[3].innerHTML = data.win_rate[i];
+                cells[4].innerHTML = data.all_kill[i];
+            }
+        },
+        error: function (msg) {
+            console.log(msg);
+            alert('系统发生错误!战队排行榜');
+        }
+    });
+}
+
+    window.addEventListener("load", load_rank1);
+
+    function choose() {
+      var teamSelection = $('#teamSelection');
+      // 使用slideToggle方法来切换显示和隐藏状态，并添加动画效果
+      teamSelection.slideToggle();
+
+        var chooseTeam = $('#chooseTeam');
+      // 切换三角形方向
+        chooseTeam.toggleClass('down');
+    }
+</script>
+<script>
+    window.onload = function() {
+      // 设置页面宽度和高度为视口宽度和高度的90%
+      var heightPercentage = 90;
+
+      var newHeight = (window.innerHeight * heightPercentage) / 100;
+
+      document.documentElement.style.height = newHeight + "px";
+    };
+</script>
+
+</html>
